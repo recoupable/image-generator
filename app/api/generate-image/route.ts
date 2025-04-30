@@ -3,17 +3,6 @@ import { experimental_generateImage as generateImage } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { uploadBase64ToArweave } from "@/lib/arweaveUploader";
 
-// Prevent caching
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
-
-// Define a type that extends GeneratedFile with the properties we expect
-interface ExtendedGeneratedImage {
-  base64Data: string;
-  mimeType: string;
-}
-
 export async function POST(req: NextRequest) {
   try {
     // Check if OpenAI API key is available
@@ -48,12 +37,10 @@ export async function POST(req: NextRequest) {
     // Upload the generated image to Arweave
     let arweaveData = null;
     try {
-      // Use type assertion to make TypeScript happy
-      const extendedImage = image as unknown as ExtendedGeneratedImage;
-
       const arweaveResult = await uploadBase64ToArweave(
-        extendedImage.base64Data,
-        extendedImage.mimeType,
+        // @ts-ignore
+        image.base64Data,
+        image.mimeType,
         `generated-image-${Date.now()}.png`
       );
       arweaveData = {
@@ -85,3 +72,8 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// Prevent caching
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
