@@ -63,6 +63,15 @@ export function ImageGenerator() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (prompt.trim()) {
+        handleSubmit(e as unknown as React.FormEvent);
+      }
+    }
+  };
+
   return (
     <div className="space-y-8">
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,6 +82,7 @@ export function ImageGenerator() {
             placeholder="A salamander at sunrise in a forest pond in the Seychelles..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="min-h-24"
             required
           />
