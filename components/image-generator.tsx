@@ -19,6 +19,7 @@ export function ImageGenerator() {
     error,
     arweaveUri,
     smartAccount,
+    transactionHash,
   } = useGenerateImage();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -110,6 +111,19 @@ export function ImageGenerator() {
               <div className="mt-4 text-center">
                 <p className="text-sm">Smart Account:</p>
                 <p>{smartAccount.address}</p>
+              </div>
+            )}
+            {transactionHash && (
+              <div className="mt-4 text-center">
+                <p className="text-sm">Transaction Hash:</p>
+                <a
+                  href={`https://basescan.org/tx/${transactionHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-500 hover:underline"
+                >
+                  {transactionHash}
+                </a>
               </div>
             )}
           </CardContent>
