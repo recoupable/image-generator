@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     let arweaveData = null;
     try {
       const arweaveResult = await uploadBase64ToArweave(
-        // @ts-ignore
+        // @ts-expect-error image.base64Data is not typed
         image.base64Data,
         image.mimeType,
         `generated-image-${Date.now()}.png`
