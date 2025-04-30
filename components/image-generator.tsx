@@ -12,8 +12,14 @@ import { useGenerateImage } from "@/hooks/useGenerateImage";
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
-  const { generateImage, isGenerating, generatedImage, error, arweaveUri } =
-    useGenerateImage();
+  const {
+    generateImage,
+    isGenerating,
+    generatedImage,
+    error,
+    arweaveUri,
+    smartAccount,
+  } = useGenerateImage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +104,12 @@ export function ImageGenerator() {
                 >
                   {arweaveUri}
                 </a>
+              </div>
+            )}
+            {smartAccount && (
+              <div className="mt-4 text-center">
+                <p className="text-sm">Smart Account:</p>
+                <p>{smartAccount.address}</p>
               </div>
             )}
           </CardContent>

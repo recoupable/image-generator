@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { experimental_generateImage as generateImage } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { uploadBase64ToArweave } from "@/lib/arweaveUploader";
+import createSmartAccount from "@/lib/createSmartAccount";
 
 export async function POST(req: NextRequest) {
   try {
@@ -52,10 +53,13 @@ export async function POST(req: NextRequest) {
       // We'll continue and return the image even if Arweave upload fails
     }
 
+    const smartAccount = await createSmartAccount();
+
     // Return both the image and Arweave data
     return NextResponse.json({
       image,
       arweave: arweaveData,
+      smartAccount,
     });
   } catch (error) {
     console.error("Error generating image:", error);

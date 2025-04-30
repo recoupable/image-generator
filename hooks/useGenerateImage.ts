@@ -9,6 +9,7 @@ interface GeneratedImageResponse {
     id: string;
     url: string;
   };
+  smartAccount: any;
 }
 
 export function useGenerateImage() {
@@ -16,6 +17,7 @@ export function useGenerateImage() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [arweaveUri, setArweaveUri] = useState<string | null>(null);
+  const [smartAccount, setSmartAccount] = useState<any | null>(null);
 
   const generateImage = async (prompt: string) => {
     if (!prompt.trim()) return;
@@ -39,7 +41,7 @@ export function useGenerateImage() {
         throw new Error(data.message || "Failed to generate image");
       }
 
-      const { image, arweave } = data as GeneratedImageResponse;
+      const { image, arweave, smartAccount } = data as GeneratedImageResponse;
       const imageDataUrl = `data:${image.mimeType};base64,${image.base64Data}`;
 
       setGeneratedImage(imageDataUrl);
@@ -48,6 +50,8 @@ export function useGenerateImage() {
       if (arweave && arweave.url) {
         setArweaveUri(arweave.url);
       }
+
+      setSmartAccount(smartAccount);
     } catch (err) {
       console.error("Error details:", err);
       const errorMessage =
@@ -83,6 +87,7 @@ export function useGenerateImage() {
     generatedImage,
     error,
     arweaveUri,
+    smartAccount,
     reset,
   };
 }
