@@ -8,7 +8,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
-import { uploadBase64Image } from "@/lib/uploadToArweave";
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
@@ -40,21 +39,14 @@ export function ImageGenerator() {
       if (!response.ok) {
         throw new Error(data.message || "Failed to generate image");
       }
-      const { image } = data;
+
+      const { image, arweave } = data;
       const imageDataUrl = `data:${image.mimeType};base64,${image.base64Data}`;
       setGeneratedImage(imageDataUrl);
 
-      // Upload to Arweave
-      try {
-        const uploadResult = await uploadBase64Image(
-          image.base64Data,
-          image.mimeType
-        );
-        console.log("Image uploaded to Arweave:", uploadResult);
-        setArweaveUri(uploadResult.uri);
-      } catch (uploadError) {
-        console.error("Failed to upload to Arweave:", uploadError);
-        // Don't block the UI since the image was still generated
+      // Set Arweave URL if available
+      if (arweave && arweave.url) {
+        setArweaveUri(arweave.url);
       }
     } catch (err) {
       console.error("Error details:", err);
