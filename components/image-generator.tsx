@@ -14,7 +14,7 @@ export function ImageGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  console.log("Generated Image:", generatedImage);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
