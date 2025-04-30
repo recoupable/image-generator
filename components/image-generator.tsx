@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState } from "react";
-import { Loader2, Sparkles, ImageIcon } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
