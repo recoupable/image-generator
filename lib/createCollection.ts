@@ -40,7 +40,7 @@ const tokenAbi = [
 ] as const;
 
 // Main function to create a collection
-async function createCollection() {
+async function createCollection(collectionName: string) {
   // Initialize CDP client with your credentials
   const cdp = new CdpClient({
     apiKeyId: process.env.CDP_API_KEY_ID,
@@ -58,7 +58,6 @@ async function createCollection() {
 
   // Collection details
   const contractUri = "ar://contractUri"; // Your contract metadata URI
-  const collectionName = "My NFT Collection"; // Your collection name
 
   // Royalty configuration
   const royaltyConfig = {

@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       // We'll continue and return the image even if Arweave upload fails
     }
 
-    const { transactionHash, smartAccount } = await createCollection();
+    const { transactionHash, smartAccount } = await createCollection(prompt);
 
     // Return both the image and Arweave data
     return NextResponse.json({
