@@ -2,6 +2,11 @@ import { type NextRequest, NextResponse } from "next/server";
 import { experimental_generateImage as generateImage } from "ai";
 import { openai } from "@ai-sdk/openai";
 
+// Prevent caching
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 export async function POST(req: NextRequest) {
   try {
     // Check if OpenAI API key is available
