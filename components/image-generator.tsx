@@ -104,15 +104,6 @@ export function ImageGenerator() {
         </div>
       )}
 
-      {!generatedImage && !isGenerating && (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center p-6 h-80 text-muted-foreground">
-            <ImageIcon className="h-12 w-12 mb-4" />
-            <p>Your generated image will appear here</p>
-          </CardContent>
-        </Card>
-      )}
-
       {generatedImage && (
         <Card>
           <CardContent className="p-2">
