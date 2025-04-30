@@ -106,7 +106,7 @@ async function createCollection() {
   });
 
   return {
-    smartAccountAddress: smartAccount.address,
+    smartAccount,
     transactionHash: userOp.transactionHash,
   };
 }
