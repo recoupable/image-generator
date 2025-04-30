@@ -32,24 +32,13 @@ export function ImageGenerator() {
         body: JSON.stringify({ prompt }),
       });
 
-      // Check if the response is JSON before trying to parse it
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        // If not JSON, get the text and throw an error
-        const text = await response.json();
-        console.error("JSON response:", text);
-        throw new Error(
-          `Server returned JSON response: ${JSON.stringify(text)}...`
-        );
-      }
-
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to generate image");
       }
-
-      setGeneratedImage(data.imageUrl);
+      const { image } = data;
+      setGeneratedImage(`data:${image.mimeType};base64,${image.base64Data}`);
     } catch (err) {
       console.error("Error details:", err);
       const errorMessage =
