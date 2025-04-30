@@ -1,27 +1,27 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { Loader2, ImageIcon, Sparkles } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import Image from "next/image"
+import type React from "react";
+import { useState } from "react";
+import { Loader2, ImageIcon, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
 
 export function ImageGenerator() {
-  const [prompt, setPrompt] = useState("")
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [prompt, setPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!prompt.trim()) return
+    if (!prompt.trim()) return;
 
-    setIsGenerating(true)
-    setError(null)
+    setIsGenerating(true);
+    setError(null);
 
     try {
       const response = await fetch("/api/generate-image", {
@@ -30,42 +30,49 @@ export function ImageGenerator() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt }),
-      })
+      });
 
       // Check if the response is JSON before trying to parse it
-      const contentType = response.headers.get("content-type")
+      const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         // If not JSON, get the text and throw an error
-        const text = await response.json()
-        console.error("JSON response:", body)
-        throw new Error(`Server returned JSON response: ${JSON.stringify(body)}...`)
+        const text = await response.json();
+        console.error("JSON response:", text);
+        throw new Error(
+          `Server returned JSON response: ${JSON.stringify(text)}...`
+        );
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to generate image")
+        throw new Error(data.message || "Failed to generate image");
       }
 
-      setGeneratedImage(data.imageUrl)
+      setGeneratedImage(data.imageUrl);
     } catch (err) {
-      console.error("Error details:", err)
-      const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred"
+      console.error("Error details:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
 
       // More specific error messages based on common issues
       if (errorMessage.includes("API key")) {
-        setError("OpenAI API key is missing or invalid. Please check your environment variables.")
+        setError(
+          "OpenAI API key is missing or invalid. Please check your environment variables."
+        );
       } else if (errorMessage.includes("content policy")) {
-        setError("Your prompt may violate content policy. Please try a different prompt.")
+        setError(
+          "Your prompt may violate content policy. Please try a different prompt."
+        );
       } else if (errorMessage.includes("rate limit")) {
-        setError("Rate limit exceeded. Please try again later.")
+        setError("Rate limit exceeded. Please try again later.");
       } else {
-        setError(errorMessage)
+        setError(errorMessage);
       }
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-8">
@@ -82,7 +89,11 @@ export function ImageGenerator() {
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={isGenerating || !prompt.trim()}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isGenerating || !prompt.trim()}
+        >
           {isGenerating ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -117,11 +128,17 @@ export function ImageGenerator() {
         <Card>
           <CardContent className="p-2">
             <div className="relative aspect-square max-h-[600px] w-full overflow-hidden rounded-md">
-              <Image src={generatedImage || "/placeholder.svg"} alt={prompt} fill className="object-contain" priority />
+              <Image
+                src={generatedImage || "/placeholder.svg"}
+                alt={prompt}
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
           </CardContent>
         </Card>
       )}
     </div>
-  )
+  );
 }
