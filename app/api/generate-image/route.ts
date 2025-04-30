@@ -2,8 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { experimental_generateImage as generateImage } from "ai";
 import { openai } from "@ai-sdk/openai";
 
-export const runtime = "edge"; // Use edge runtime for better performance
-
 export async function POST(req: NextRequest) {
   try {
     // Check if OpenAI API key is available
