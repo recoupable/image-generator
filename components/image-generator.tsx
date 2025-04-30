@@ -8,67 +8,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import { useGenerateImage } from "@/hooks/useGenerateImage";
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [arweaveUri, setArweaveUri] = useState<string | null>(null);
+  const { generateImage, isGenerating, generatedImage, error, arweaveUri } =
+    useGenerateImage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!prompt.trim()) return;
-
-    setIsGenerating(true);
-    setError(null);
-    setArweaveUri(null);
-
-    try {
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to generate image");
-      }
-
-      const { image, arweave } = data;
-      const imageDataUrl = `data:${image.mimeType};base64,${image.base64Data}`;
-      setGeneratedImage(imageDataUrl);
-
-      // Set Arweave URL if available
-      if (arweave && arweave.url) {
-        setArweaveUri(arweave.url);
-      }
-    } catch (err) {
-      console.error("Error details:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "An unexpected error occurred";
-
-      // More specific error messages based on common issues
-      if (errorMessage.includes("API key")) {
-        setError(
-          "OpenAI API key is missing or invalid. Please check your environment variables."
-        );
-      } else if (errorMessage.includes("content policy")) {
-        setError(
-          "Your prompt may violate content policy. Please try a different prompt."
-        );
-      } else if (errorMessage.includes("rate limit")) {
-        setError("Rate limit exceeded. Please try again later.");
-      } else {
-        setError(errorMessage);
-      }
-    } finally {
-      setIsGenerating(false);
+    if (prompt.trim()) {
+      await generateImage(prompt);
     }
   };
 
@@ -130,7 +80,7 @@ export function ImageGenerator() {
           <CardContent className="p-2">
             <div className="relative aspect-square max-h-[600px] w-full overflow-hidden rounded-md">
               <Image
-                src={generatedImage || "/placeholder.svg"}
+                src={generatedImage}
                 alt={prompt}
                 fill
                 className="object-contain"
