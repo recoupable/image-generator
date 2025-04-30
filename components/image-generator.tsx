@@ -8,12 +8,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import { uploadBase64Image } from "@/lib/uploadToArweave";
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [arweaveUri, setArweaveUri] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +24,7 @@ export function ImageGenerator() {
 
     setIsGenerating(true);
     setError(null);
+    setArweaveUri(null);
 
     try {
       const response = await fetch("/api/generate-image", {
@@ -38,7 +41,21 @@ export function ImageGenerator() {
         throw new Error(data.message || "Failed to generate image");
       }
       const { image } = data;
-      setGeneratedImage(`data:${image.mimeType};base64,${image.base64Data}`);
+      const imageDataUrl = `data:${image.mimeType};base64,${image.base64Data}`;
+      setGeneratedImage(imageDataUrl);
+
+      // Upload to Arweave
+      try {
+        const uploadResult = await uploadBase64Image(
+          image.base64Data,
+          image.mimeType
+        );
+        console.log("Image uploaded to Arweave:", uploadResult);
+        setArweaveUri(uploadResult.uri);
+      } catch (uploadError) {
+        console.error("Failed to upload to Arweave:", uploadError);
+        // Don't block the UI since the image was still generated
+      }
     } catch (err) {
       console.error("Error details:", err);
       const errorMessage =
@@ -126,6 +143,19 @@ export function ImageGenerator() {
                 priority
               />
             </div>
+            {arweaveUri && (
+              <div className="mt-4 text-center">
+                <p className="text-sm">Stored permanently on Arweave:</p>
+                <a
+                  href={arweaveUri}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-500 hover:underline"
+                >
+                  {arweaveUri}
+                </a>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

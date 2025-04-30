@@ -15,19 +15,43 @@ const ARWEAVE_KEY = JSON.parse(
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const file = formData.get("file") as File;
+    // Check content type to determine if we're dealing with form data or JSON
+    const contentType = request.headers.get("Content-Type") || "";
 
-    if (!file) {
-      throw new Error("No file provided");
+    let fileBuffer: Buffer;
+    let fileName: string = "image.png";
+    let fileType: string = "image/png";
+
+    if (contentType.includes("multipart/form-data")) {
+      // Handle form data with File object
+      const formData = await request.formData();
+      const file = formData.get("file") as File;
+
+      if (!file) {
+        throw new Error("No file provided");
+      }
+
+      fileBuffer = Buffer.from(await file.arrayBuffer());
+      fileName = file.name;
+      fileType = file.type || "application/octet-stream";
+    } else {
+      // Handle JSON with base64 data
+      const { base64, mimeType, filename } = await request.json();
+
+      if (!base64) {
+        throw new Error("No base64 data provided");
+      }
+
+      fileBuffer = Buffer.from(base64, "base64");
+      fileType = mimeType || "image/png";
+      fileName = filename || "generated-image.png";
     }
+
+    const fileSize = fileBuffer.length;
 
     const turbo = TurboFactory.authenticated({
       privateKey: ARWEAVE_KEY,
     });
-
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
-    const fileSize = fileBuffer.length;
 
     const [{ winc: fileSizeCost }] = await turbo.getUploadCosts({
       bytes: [fileSize],
@@ -42,11 +66,11 @@ export async function POST(request: Request) {
         tags: [
           {
             name: "Content-Type",
-            value: file.type || "application/octet-stream",
+            value: fileType,
           },
           {
             name: "File-Name",
-            value: file.name,
+            value: fileName,
           },
           {
             name: "App-Name",
@@ -65,8 +89,8 @@ export async function POST(request: Request) {
       id,
       dataCaches,
       cost: fileSizeCost,
-      fileName: file.name,
-      fileType: file.type,
+      fileName,
+      fileType,
       fileSize,
       url: `https://arweave.net/${id}`,
     });
