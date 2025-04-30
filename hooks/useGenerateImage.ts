@@ -1,10 +1,5 @@
 import { useState } from "react";
 
-interface GenerateImageOptions {
-  onSuccess?: (imageUrl: string, arweaveUrl?: string) => void;
-  onError?: (error: string) => void;
-}
-
 interface GeneratedImageResponse {
   image: {
     base64Data: string;
@@ -16,7 +11,7 @@ interface GeneratedImageResponse {
   };
 }
 
-export function useGenerateImage(options?: GenerateImageOptions) {
+export function useGenerateImage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,11 +48,6 @@ export function useGenerateImage(options?: GenerateImageOptions) {
       if (arweave && arweave.url) {
         setArweaveUri(arweave.url);
       }
-
-      // Call onSuccess callback if provided
-      if (options?.onSuccess) {
-        options.onSuccess(imageDataUrl, arweave?.url);
-      }
     } catch (err) {
       console.error("Error details:", err);
       const errorMessage =
@@ -76,11 +66,6 @@ export function useGenerateImage(options?: GenerateImageOptions) {
       }
 
       setError(displayError);
-
-      // Call onError callback if provided
-      if (options?.onError) {
-        options.onError(displayError);
-      }
     } finally {
       setIsGenerating(false);
     }
