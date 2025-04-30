@@ -80,19 +80,6 @@ export async function uploadBufferToArweave(
 }
 
 /**
- * Upload a file to Arweave
- */
-export async function uploadFileToArweave(
-  file: File
-): Promise<ArweaveUploadResult> {
-  const fileBuffer = Buffer.from(await file.arrayBuffer());
-  const fileName = file.name;
-  const fileType = file.type || "application/octet-stream";
-
-  return uploadBufferToArweave(fileBuffer, fileName, fileType);
-}
-
-/**
  * Upload a base64 string to Arweave
  */
 export async function uploadBase64ToArweave(
