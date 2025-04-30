@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -83,38 +83,27 @@ export function ImageGenerator() {
 
   return (
     <div className="space-y-8">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="prompt">Prompt</Label>
-          <Textarea
-            id="prompt"
-            placeholder="A salamander at sunrise in a forest pond in the Seychelles..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="min-h-24"
-            required
-          />
-        </div>
+      {!isGenerating && (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="prompt">Prompt</Label>
+            <Textarea
+              id="prompt"
+              placeholder="A salamander at sunrise in a forest pond in the Seychelles..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="min-h-24"
+              required
+            />
+          </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isGenerating || !prompt.trim()}
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <Sparkles className="mr-2 h-4 w-4" />
-              Generate Image
-            </>
-          )}
-        </Button>
-      </form>
+          <Button type="submit" className="w-full" disabled={!prompt.trim()}>
+            <Sparkles className="mr-2 h-4 w-4" />
+            Generate Image
+          </Button>
+        </form>
+      )}
 
       {error && (
         <div className="p-4 text-sm text-red-500 bg-red-50 rounded-md">
@@ -123,7 +112,20 @@ export function ImageGenerator() {
         </div>
       )}
 
-      {generatedImage && (
+      {isGenerating && (
+        <Card>
+          <CardContent className="p-2">
+            <div className="relative aspect-square max-h-[600px] w-full overflow-hidden rounded-md bg-gray-100 animate-pulse flex items-center justify-center">
+              <Loader2 className="h-12 w-12 text-gray-400 animate-spin" />
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-sm">Generating image...</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {!isGenerating && generatedImage && (
         <Card>
           <CardContent className="p-2">
             <div className="relative aspect-square max-h-[600px] w-full overflow-hidden rounded-md">
