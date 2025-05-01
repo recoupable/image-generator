@@ -18,7 +18,7 @@ export const generateMetadata = (): Metadata => {
           action: {
             type: "launch_frame",
             name: process.env.NEXT_PUBLIC_ONCHAINKIT_PROJECT_NAME,
-            url: URL,
+            url: process.env.NEXT_PUBLIC_URL,
             splashImageUrl: process.env.NEXT_PUBLIC_SPLASH_IMAGE_URL,
             splashBackgroundColor: `#${process.env.NEXT_PUBLIC_SPLASH_BACKGROUND_COLOR}`,
           },
