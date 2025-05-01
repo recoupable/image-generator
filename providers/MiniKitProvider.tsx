@@ -1,3 +1,5 @@
+"use client";
+
 import { MiniKitProvider as MKProvider } from "@coinbase/onchainkit/minikit";
 import { ReactNode } from "react";
 import { base } from "viem/chains";
