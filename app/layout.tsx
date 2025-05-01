@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import { MiniKitProvider } from "@/providers/MiniKitProvider";
 const inter = Inter({ subsets: ["latin"] });
 
-export const generateMetadata = (): Metadata => {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: process.env.NEXT_PUBLIC_ONCHAINKIT_PROJECT_NAME,
     description: `${process.env.NEXT_PUBLIC_ONCHAINKIT_PROJECT_NAME} - A MiniKit App`,
@@ -26,7 +26,7 @@ export const generateMetadata = (): Metadata => {
       }),
     },
   };
-};
+}
 
 export default function RootLayout({
   children,
