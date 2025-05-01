@@ -1,0 +1,32 @@
+"use client";
+
+import { useEffect } from "react";
+import { ImageGenerator } from "./image-generator";
+import { useMiniKit } from "@coinbase/onchainkit/minikit";
+
+const HomePage = () => {
+  const { setFrameReady, isFrameReady } = useMiniKit();
+
+  // The setFrameReady() function is called when your mini-app is ready to be shown
+  useEffect(() => {
+    if (!isFrameReady) {
+      setFrameReady();
+    }
+  }, [setFrameReady, isFrameReady]);
+  return (
+    <div className="w-full max-w-3xl space-y-6">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">
+          Base Image Generator
+        </h1>
+        <p className="text-muted-foreground">
+          Enter a prompt and generate an image using AI and auto-published
+          onchain with base
+        </p>
+      </div>
+      <ImageGenerator />
+    </div>
+  );
+};
+
+export default HomePage;
