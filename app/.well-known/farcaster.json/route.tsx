@@ -1,3 +1,5 @@
+"use server";
+
 export async function GET() {
   const URL = process.env.NEXT_PUBLIC_URL;
 
